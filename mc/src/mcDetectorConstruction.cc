@@ -100,16 +100,23 @@ G4VPhysicalVolume *mcDetectorConstruction::Construct()
     G4Box *solidAluminumBoard = new G4Box("AluminumBoard", 11.5 * cm, 11.5 * cm, 1.875 * mm);
     G4LogicalVolume *logicAluminumBoard = new G4LogicalVolume(solidAluminumBoard, G4_Al, "AluminumBoard");
 
+    constexpr double sensor_offset = 6.0 * cm;
+    constexpr double module_offset = 68.5 * cm;
+    constexpr double layer_offset = 49.5 * cm;
+
+    constexpr double module_spacing = 27.4 * cm;
+    constexpr double layer_spacing = 11.0 * cm;
+
     for (int i = 0; i < 10; ++i)
     {
         for (int j = 0; j < 6; ++j)
         {
             for (int k = 0; k < 6; ++k)
             {
-                G4ThreeVector SensorPosition0 = G4ThreeVector(j * 27.4 * cm - 68.5 * cm + 6 * cm, k * 27.4 * cm - 68.5 * cm + 6 * cm, -49.5 * cm + i * 11 * cm);
-                G4ThreeVector SensorPosition1 = G4ThreeVector(j * 27.4 * cm - 68.5 * cm - 6 * cm, k * 27.4 * cm - 68.5 * cm + 6 * cm, -49.5 * cm + i * 11 * cm);
-                G4ThreeVector SensorPosition2 = G4ThreeVector(j * 27.4 * cm - 68.5 * cm - 6 * cm, k * 27.4 * cm - 68.5 * cm - 6 * cm, -49.5 * cm + i * 11 * cm);
-                G4ThreeVector SensorPosition3 = G4ThreeVector(j * 27.4 * cm - 68.5 * cm + 6 * cm, k * 27.4 * cm - 68.5 * cm - 6 * cm, -49.5 * cm + i * 11 * cm);
+                G4ThreeVector SensorPosition0 = G4ThreeVector(j * module_spacing - module_offset + sensor_offset, k * module_spacing - module_offset + sensor_offset, -layer_offset + i * layer_spacing);
+                G4ThreeVector SensorPosition1 = G4ThreeVector(j * module_spacing - module_offset - sensor_offset, k * module_spacing - module_offset + sensor_offset, -layer_offset + i * layer_spacing);
+                G4ThreeVector SensorPosition2 = G4ThreeVector(j * module_spacing - module_offset - sensor_offset, k * module_spacing - module_offset - sensor_offset, -layer_offset + i * layer_spacing);
+                G4ThreeVector SensorPosition3 = G4ThreeVector(j * module_spacing - module_offset + sensor_offset, k * module_spacing - module_offset - sensor_offset, -layer_offset + i * layer_spacing);
 
                 physSensor = new G4PVPlacement(0,
                                                SensorPosition0,
@@ -143,7 +150,7 @@ G4VPhysicalVolume *mcDetectorConstruction::Construct()
                                                1000 * i + 100 * j + 10 * k + 3);
 
                 new G4PVPlacement(0,
-                                  G4ThreeVector(j * 27.4 * cm - 68.5 * cm, k * 27.4 * cm - 68.5 * cm, -49.5 * cm + i * 11 * cm + 1.875 * mm + sensorHeight / 2.),
+                                  G4ThreeVector(j * module_spacing - module_offset, k * module_spacing - module_offset, -layer_offset + i * layer_spacing + 1.875 * mm + sensorHeight / 2.),
                                   logicAluminumBoard,
                                   "AluminumBoard",
                                   logicDetectorArray,
